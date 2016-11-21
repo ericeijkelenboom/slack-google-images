@@ -12,7 +12,7 @@ const client = new ImagesClient(nconf.get('GOOGLE_CUSTOM_SEARCH_ENGINE_ID'), nco
 const slackWebHook = nconf.get('SLACK_WEB_HOOK');
 
 function handler(event, context) {
-    getImgUrlFromSearch('russ meyer girl')
+    getImgUrlFromSearch(nconf.get('QUERY_STRING'))
     .then(postImageToSlack)
     .then(() => context.succeed())
     .catch(err => {
@@ -22,7 +22,7 @@ function handler(event, context) {
 }
 
 function postImageToSlack(imgUrl) {
-    console.log('Posting to Slack', imgUrl);
+    // console.log('Posting to Slack', imgUrl);
 
     var options = {
         method: 'POST',
@@ -41,14 +41,13 @@ function getImgUrlFromSearch(searchString) {
     return Promise.all(pagesPromises).then(function (pageResult) {
         let allImages = [];
 
-        // Create on long list of images
         pageResult.forEach(images => {
             allImages = allImages.concat(images);
         });
 
         const rnd = Math.floor(Math.random() * 100);
 
-        console.log('Finding image %s out of %s', rnd, allImages.length);
+        // console.log('Finding image %s out of %s', rnd, allImages.length);
 
         const url = allImages[rnd].url;
         return url;
